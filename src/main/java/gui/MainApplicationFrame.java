@@ -2,12 +2,18 @@ package gui;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -22,6 +28,78 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+    private class MainMenuBar extends JMenuBar {
+
+        private MainMenuBar() {
+            JMenu viewModeMenu = createLookAndFeelMenu();
+            JMenu testMenu = createTestMenu();
+            JMenu exitMenu = createExitMenu();
+
+            add(viewModeMenu);
+            add(testMenu);
+            add(exitMenu);
+        }
+        private JMenu createLookAndFeelMenu() {
+
+            JMenu lookAndFeelMenu = new JMenu("Режим отображения");
+            lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
+            lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
+                "Управление режимом отображения приложения");
+
+            {
+                JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
+                systemLookAndFeel.addActionListener((event) -> {
+                    MainApplicationFrame.this
+                        .setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                    this.invalidate();
+                });
+                lookAndFeelMenu.add(systemLookAndFeel);
+            }
+
+            {
+                JMenuItem crossplatformLookAndFeel = new JMenuItem("Универсальная схема",
+                    KeyEvent.VK_S);
+                crossplatformLookAndFeel.addActionListener((event) -> {
+                    MainApplicationFrame.this
+                        .setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+                    this.invalidate();
+                });
+                lookAndFeelMenu.add(crossplatformLookAndFeel);
+            }
+            return lookAndFeelMenu;
+        }
+        private JMenu createTestMenu() {
+
+            JMenu testMenu = new JMenu("Тесты");
+            testMenu.setMnemonic(KeyEvent.VK_T);
+            testMenu.getAccessibleContext().setAccessibleDescription("Тестовые команды");
+
+            {
+                JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог",
+                    KeyEvent.VK_S);
+                addLogMessageItem.addActionListener((event) -> Logger
+                    .debug("Новая строка"));
+                testMenu.add(addLogMessageItem);
+            }
+            return testMenu;
+        }
+        private JMenu createExitMenu() {
+            JMenu exitMenu = new JMenu("Выход");
+            JMenuItem exitMenuItem = new JMenuItem("Выйти из приложения",
+                KeyEvent.VK_Q);
+            exitMenu.getAccessibleContext().setAccessibleDescription("Закрыть приложение");
+            exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
+                InputEvent.SHIFT_DOWN_MASK));
+            exitMenuItem.addActionListener((event) -> {
+                    WindowEvent closeEvent = new WindowEvent(
+                        MainApplicationFrame.this, WindowEvent.WINDOW_CLOSING);
+                    Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(closeEvent);
+                }
+            );
+            exitMenu.add(exitMenuItem);
+            return exitMenu;
+        }
+    }
 
     public MainApplicationFrame() {
         int inset = 50;
@@ -42,7 +120,7 @@ public class MainApplicationFrame extends JFrame
         gameWindow.setSize(400,  400);
         addWindow(gameWindow);
 
-        setJMenuBar(new MainMenuBar(this));
+        setJMenuBar(new MainMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
