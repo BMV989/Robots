@@ -6,6 +6,8 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
@@ -27,6 +29,8 @@ import log.Logger;
  */
 public class MainApplicationFrame extends JFrame
 {
+    private final ResourceBundle bundle = ResourceBundle.getBundle("resources",
+        Locale.getDefault());
     private final JDesktopPane desktopPane = new JDesktopPane();
     private class MainMenuBar extends JMenuBar {
 
@@ -35,19 +39,21 @@ public class MainApplicationFrame extends JFrame
             JMenu testMenu = createTestMenu();
             JMenu exitMenu = createExitMenu();
 
+            add(exitMenu);
             add(viewModeMenu);
             add(testMenu);
-            add(exitMenu);
         }
+
         private JMenu createLookAndFeelMenu() {
 
-            JMenu lookAndFeelMenu = new JMenu("Режим отображения");
+            JMenu lookAndFeelMenu = new JMenu(bundle.getString("lookAndFeelMenu.s"));
             lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
-            lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
-                "Управление режимом отображения приложения");
+            lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(bundle
+                .getString("lookAndFeelMenu.getAccessibleContext.setAccessibleDescription"));
 
             {
-                JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
+                JMenuItem systemLookAndFeel = new JMenuItem(bundle
+                    .getString("systemLookAndFeel.text"), KeyEvent.VK_S);
                 systemLookAndFeel.addActionListener((event) -> {
                     MainApplicationFrame.this
                         .setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -57,7 +63,8 @@ public class MainApplicationFrame extends JFrame
             }
 
             {
-                JMenuItem crossplatformLookAndFeel = new JMenuItem("Универсальная схема",
+                JMenuItem crossplatformLookAndFeel = new JMenuItem(bundle
+                    .getString("crossplatformLookAndFeel.text"),
                     KeyEvent.VK_S);
                 crossplatformLookAndFeel.addActionListener((event) -> {
                     MainApplicationFrame.this
@@ -68,26 +75,31 @@ public class MainApplicationFrame extends JFrame
             }
             return lookAndFeelMenu;
         }
+
         private JMenu createTestMenu() {
 
-            JMenu testMenu = new JMenu("Тесты");
+            JMenu testMenu = new JMenu(bundle.getString("testMenu.s"));
             testMenu.setMnemonic(KeyEvent.VK_T);
-            testMenu.getAccessibleContext().setAccessibleDescription("Тестовые команды");
+            testMenu.getAccessibleContext().setAccessibleDescription(bundle
+                .getString("testMenu.getAccessibleContext.setAccessibleDescription"));
 
             {
-                JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог",
+                JMenuItem addLogMessageItem = new JMenuItem(bundle
+                    .getString("addLogMessageItem.text"),
                     KeyEvent.VK_S);
                 addLogMessageItem.addActionListener((event) -> Logger
-                    .debug("Новая строка"));
+                    .debug(bundle.getString("Logger.debug.strMessage.addLine")));
                 testMenu.add(addLogMessageItem);
             }
             return testMenu;
         }
+
         private JMenu createExitMenu() {
-            JMenu exitMenu = new JMenu("Выход");
-            JMenuItem exitMenuItem = new JMenuItem("Выйти из приложения",
+            JMenu exitMenu = new JMenu(bundle.getString("exitMenu.s"));
+            JMenuItem exitMenuItem = new JMenuItem(bundle.getString("exitMenuItem.text"),
                 KeyEvent.VK_Q);
-            exitMenu.getAccessibleContext().setAccessibleDescription("Закрыть приложение");
+            exitMenu.getAccessibleContext().setAccessibleDescription(bundle
+                .getString("exitMenu.getAccessibleContext.setAccessibleDescription"));
             exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
                 InputEvent.SHIFT_DOWN_MASK));
             exitMenuItem.addActionListener((event) -> {
@@ -116,8 +128,7 @@ public class MainApplicationFrame extends JFrame
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
-        GameWindow gameWindow = new GameWindow();
-        gameWindow.setSize(400,  400);
+        GameWindow gameWindow = new GameWindow(bundle.getString("gameWindow.title"));
         addWindow(gameWindow);
 
         setJMenuBar(new MainMenuBar());
@@ -132,12 +143,13 @@ public class MainApplicationFrame extends JFrame
     
     protected LogWindow createLogWindow()
     {
-        LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
+        LogWindow logWindow = new LogWindow(bundle
+            .getString("logWindow.title"), Logger.getDefaultLogSource());
         logWindow.setLocation(10,10);
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
-        Logger.debug("Протокол работает");
+        Logger.debug(bundle.getString("Logger.debug.strMessage.status"));
         return logWindow;
     }
     
@@ -149,14 +161,13 @@ public class MainApplicationFrame extends JFrame
 
     private void ExitConfirm() {
         int confirm = JOptionPane.showConfirmDialog(this,
-            "Вы уверены?",
-            "Выйти",
+            bundle.getString("confirm.message"),
+            bundle.getString("confirm.title"),
             JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
-
-    protected void setLookAndFeel(String className)
+    private void setLookAndFeel(String className)
     {
         try
         {
