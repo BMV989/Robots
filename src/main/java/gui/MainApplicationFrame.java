@@ -45,56 +45,59 @@ public class MainApplicationFrame extends JFrame
             item.addActionListener(l);
             return item;
         }
+        private JMenu createJMenu(String s, Integer m, String desc) {
+            JMenu menu = new JMenu(s);
+            menu.setMnemonic(m);
+            menu.getAccessibleContext().setAccessibleDescription(desc);
+            return menu;
+        }
         private JMenu createLookAndFeelMenu() {
-
-            JMenu lookAndFeelMenu = new JMenu(bundle.getString("lookAndFeelMenu.s"));
-            lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
-            lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(bundle
-                .getString("lookAndFeelMenu.getAccessibleContext.setAccessibleDescription"));
+            JMenu lookAndFeelMenu = createJMenu(
+                bundle.getString("lookAndFeelMenu.s"),
+                KeyEvent.VK_V,
+                bundle
+                    .getString("lookAndFeelMenu.getAccessibleContext.setAccessibleDescription")
+            );
             lookAndFeelMenu.add(createJMenuItem(
                 bundle.getString("systemLookAndFeel.text"), KeyEvent.VK_S,
-                (event) -> {
-                    MainApplicationFrame.this
-                        .setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                    this.invalidate();
-                }));
+                e -> MainApplicationFrame.this
+                    .setLookAndFeel(UIManager.getSystemLookAndFeelClassName())));
             lookAndFeelMenu.add(createJMenuItem(bundle
-                    .getString("crossplatformLookAndFeel.text"), KeyEvent.VK_S, (event) -> {
-                    MainApplicationFrame.this
-                        .setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                    this.invalidate();
-                }));
+                    .getString("crossplatformLookAndFeel.text"), KeyEvent.VK_S, e ->
+                MainApplicationFrame.this
+                        .setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName())));
             return lookAndFeelMenu;
         }
 
         private JMenu createTestMenu() {
-
-            JMenu testMenu = new JMenu(bundle.getString("testMenu.s"));
-            testMenu.setMnemonic(KeyEvent.VK_T);
-            testMenu.getAccessibleContext().setAccessibleDescription(bundle
-                .getString("testMenu.getAccessibleContext.setAccessibleDescription"));
+            JMenu testMenu = createJMenu(
+                bundle.getString("testMenu.s"),
+                KeyEvent.VK_T,
+                bundle.getString("testMenu.getAccessibleContext.setAccessibleDescription"));
             testMenu.add(createJMenuItem(
                 bundle.getString("addLogMessageItem.text"),
                 KeyEvent.VK_S,
-                (event) -> Logger
+                e -> Logger
                     .debug(bundle.getString("Logger.debug.strMessage.addLine"))
             ));
             return testMenu;
         }
 
         private JMenu createExitMenu() {
-            JMenu exitMenu = new JMenu(bundle.getString("exitMenu.s"));
+            JMenu exitMenu = createJMenu(
+                bundle.getString("exitMenu.s"),
+                KeyEvent.VK_E,
+                bundle.getString("exitMenu.getAccessibleContext.setAccessibleDescription")
+            );
             JMenuItem exitMenuItem = createJMenuItem(
                 bundle.getString("exitMenuItem.text"),
                 KeyEvent.VK_Q,
-                (event) -> {
+                e -> {
                     WindowEvent closeEvent = new WindowEvent(
                         MainApplicationFrame.this, WindowEvent.WINDOW_CLOSING);
                     Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(closeEvent);
                 }
             );
-            exitMenu.getAccessibleContext().setAccessibleDescription(bundle
-                .getString("exitMenu.getAccessibleContext.setAccessibleDescription"));
             exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
                 InputEvent.SHIFT_DOWN_MASK));
             exitMenu.add(exitMenuItem);
@@ -166,6 +169,9 @@ public class MainApplicationFrame extends JFrame
             | IllegalAccessException | UnsupportedLookAndFeelException e)
         {
             // just ignore
+        }
+        finally {
+            invalidate();
         }
     }
 }
