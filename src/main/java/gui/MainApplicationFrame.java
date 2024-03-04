@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -35,44 +36,34 @@ public class MainApplicationFrame extends JFrame
     private class MainMenuBar extends JMenuBar {
 
         private MainMenuBar() {
-            JMenu viewModeMenu = createLookAndFeelMenu();
-            JMenu testMenu = createTestMenu();
-            JMenu exitMenu = createExitMenu();
-
-            add(exitMenu);
-            add(viewModeMenu);
-            add(testMenu);
+            add(createExitMenu());
+            add(createLookAndFeelMenu());
+            add(createTestMenu());
         }
-
+        private JMenuItem createJMenuItem(String s, Integer m, ActionListener l) {
+            JMenuItem item = new JMenuItem(s, m);
+            item.addActionListener(l);
+            return item;
+        }
         private JMenu createLookAndFeelMenu() {
 
             JMenu lookAndFeelMenu = new JMenu(bundle.getString("lookAndFeelMenu.s"));
             lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
             lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(bundle
                 .getString("lookAndFeelMenu.getAccessibleContext.setAccessibleDescription"));
-
-            {
-                JMenuItem systemLookAndFeel = new JMenuItem(bundle
-                    .getString("systemLookAndFeel.text"), KeyEvent.VK_S);
-                systemLookAndFeel.addActionListener((event) -> {
+            lookAndFeelMenu.add(createJMenuItem(
+                bundle.getString("systemLookAndFeel.text"), KeyEvent.VK_S,
+                (event) -> {
                     MainApplicationFrame.this
                         .setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                     this.invalidate();
-                });
-                lookAndFeelMenu.add(systemLookAndFeel);
-            }
-
-            {
-                JMenuItem crossplatformLookAndFeel = new JMenuItem(bundle
-                    .getString("crossplatformLookAndFeel.text"),
-                    KeyEvent.VK_S);
-                crossplatformLookAndFeel.addActionListener((event) -> {
+                }));
+            lookAndFeelMenu.add(createJMenuItem(bundle
+                    .getString("crossplatformLookAndFeel.text"), KeyEvent.VK_S, (event) -> {
                     MainApplicationFrame.this
                         .setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
                     this.invalidate();
-                });
-                lookAndFeelMenu.add(crossplatformLookAndFeel);
-            }
+                }));
             return lookAndFeelMenu;
         }
 
@@ -82,32 +73,30 @@ public class MainApplicationFrame extends JFrame
             testMenu.setMnemonic(KeyEvent.VK_T);
             testMenu.getAccessibleContext().setAccessibleDescription(bundle
                 .getString("testMenu.getAccessibleContext.setAccessibleDescription"));
-
-            {
-                JMenuItem addLogMessageItem = new JMenuItem(bundle
-                    .getString("addLogMessageItem.text"),
-                    KeyEvent.VK_S);
-                addLogMessageItem.addActionListener((event) -> Logger
-                    .debug(bundle.getString("Logger.debug.strMessage.addLine")));
-                testMenu.add(addLogMessageItem);
-            }
+            testMenu.add(createJMenuItem(
+                bundle.getString("addLogMessageItem.text"),
+                KeyEvent.VK_S,
+                (event) -> Logger
+                    .debug(bundle.getString("Logger.debug.strMessage.addLine"))
+            ));
             return testMenu;
         }
 
         private JMenu createExitMenu() {
             JMenu exitMenu = new JMenu(bundle.getString("exitMenu.s"));
-            JMenuItem exitMenuItem = new JMenuItem(bundle.getString("exitMenuItem.text"),
-                KeyEvent.VK_Q);
-            exitMenu.getAccessibleContext().setAccessibleDescription(bundle
-                .getString("exitMenu.getAccessibleContext.setAccessibleDescription"));
-            exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
-                InputEvent.SHIFT_DOWN_MASK));
-            exitMenuItem.addActionListener((event) -> {
+            JMenuItem exitMenuItem = createJMenuItem(
+                bundle.getString("exitMenuItem.text"),
+                KeyEvent.VK_Q,
+                (event) -> {
                     WindowEvent closeEvent = new WindowEvent(
                         MainApplicationFrame.this, WindowEvent.WINDOW_CLOSING);
                     Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(closeEvent);
                 }
             );
+            exitMenu.getAccessibleContext().setAccessibleDescription(bundle
+                .getString("exitMenu.getAccessibleContext.setAccessibleDescription"));
+            exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,
+                InputEvent.SHIFT_DOWN_MASK));
             exitMenu.add(exitMenuItem);
             return exitMenu;
         }
@@ -125,12 +114,10 @@ public class MainApplicationFrame extends JFrame
         setContentPane(desktopPane);
         
         
-        LogWindow logWindow = createLogWindow();
-        addWindow(logWindow);
+        addWindow(createLogWindow(), 300, 800);
 
-        GameWindow gameWindow = new GameWindow(bundle.getString("gameWindow.title"));
-        addWindow(gameWindow);
-
+        addWindow(new GameWindow(bundle.getString("gameWindow.title")),
+            400, 400);
         setJMenuBar(new MainMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -146,15 +133,16 @@ public class MainApplicationFrame extends JFrame
         LogWindow logWindow = new LogWindow(bundle
             .getString("logWindow.title"), Logger.getDefaultLogSource());
         logWindow.setLocation(10,10);
-        logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
         Logger.debug(bundle.getString("Logger.debug.strMessage.status"));
         return logWindow;
     }
     
-    protected void addWindow(JInternalFrame frame)
-    {
+    protected void addWindow(JInternalFrame frame, Integer width, Integer height) {
+        if (width != null && height != null) {
+            frame.setSize(width, height);
+        }
         desktopPane.add(frame);
         frame.setVisible(true);
     }
