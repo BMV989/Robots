@@ -32,6 +32,9 @@ public class MainApplicationFrame extends JFrame
 {
     private final ResourceBundle bundle = ResourceBundle.getBundle("resources",
         Locale.getDefault());
+    private final JInternalFrame logWindow = createLogWindow();
+    private final JInternalFrame gameWindow =
+        new GameWindow(bundle.getString("gameWindow.title"));
     private final JDesktopPane desktopPane = new JDesktopPane();
     private class MainMenuBar extends JMenuBar {
 
@@ -115,11 +118,9 @@ public class MainApplicationFrame extends JFrame
             screenSize.height - inset*2);
 
         setContentPane(desktopPane);
-        
-        
-        addWindow(createLogWindow(), 300, 800);
 
-        addWindow(new GameWindow(bundle.getString("gameWindow.title")),
+        addWindow(logWindow, 300, 800);
+        addWindow(gameWindow,
             400, 400);
         setJMenuBar(new MainMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -142,12 +143,13 @@ public class MainApplicationFrame extends JFrame
         return logWindow;
     }
     
-    protected void addWindow(JInternalFrame frame, Integer width, Integer height) {
-        if (width != null && height != null) {
-            frame.setSize(width, height);
-        }
+    protected void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
         frame.setVisible(true);
+    }
+    private void addWindow(JInternalFrame frame, int width, int height) {
+        frame.setSize(width, height);
+        addWindow(frame);
     }
 
     private void ExitConfirm() {
@@ -155,7 +157,11 @@ public class MainApplicationFrame extends JFrame
             bundle.getString("confirm.message"),
             bundle.getString("confirm.title"),
             JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) setDefaultCloseOperation(EXIT_ON_CLOSE);
+        if (confirm == JOptionPane.YES_OPTION) {
+            gameWindow.dispose();
+            logWindow.dispose();
+            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        }
     }
 
     private void setLookAndFeel(String className)
