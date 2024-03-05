@@ -7,6 +7,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.JDesktopPane;
@@ -32,9 +33,6 @@ public class MainApplicationFrame extends JFrame
 {
     private final ResourceBundle bundle = ResourceBundle.getBundle("resources",
         Locale.getDefault());
-    private final JInternalFrame logWindow = createLogWindow();
-    private final JInternalFrame gameWindow =
-        new GameWindow(bundle.getString("gameWindow.title"));
     private final JDesktopPane desktopPane = new JDesktopPane();
     private class MainMenuBar extends JMenuBar {
 
@@ -119,8 +117,8 @@ public class MainApplicationFrame extends JFrame
 
         setContentPane(desktopPane);
 
-        addWindow(logWindow, 300, 800);
-        addWindow(gameWindow,
+        addWindow(createLogWindow(), 300, 800);
+        addWindow(new GameWindow(bundle.getString("gameWindow.title")),
             400, 400);
         setJMenuBar(new MainMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -131,9 +129,8 @@ public class MainApplicationFrame extends JFrame
             }
         });
     }
-    
-    protected LogWindow createLogWindow()
-    {
+
+    private LogWindow createLogWindow() {
         LogWindow logWindow = new LogWindow(bundle
             .getString("logWindow.title"), Logger.getDefaultLogSource());
         logWindow.setLocation(10,10);
@@ -143,7 +140,7 @@ public class MainApplicationFrame extends JFrame
         return logWindow;
     }
     
-    protected void addWindow(JInternalFrame frame) {
+    private void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
         frame.setVisible(true);
     }
@@ -158,8 +155,7 @@ public class MainApplicationFrame extends JFrame
             bundle.getString("confirm.title"),
             JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            gameWindow.dispose();
-            logWindow.dispose();
+            Arrays.asList(this.desktopPane.getAllFrames()).forEach(JInternalFrame::dispose);
             setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         }
     }
