@@ -1,9 +1,9 @@
-package gui;
+package localizations;
 
 import javax.swing.UIManager;
 
 public class RuLocalization {
-    static  void setup() {
+     public static void setup() {
         UIManager.put("AbstractButton.clickText", "клик");
         UIManager.put("AbstractDocument.additionText", "добавление");
         UIManager.put("AbstractDocument.deletionText", "удаление");
