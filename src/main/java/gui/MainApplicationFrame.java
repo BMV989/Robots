@@ -117,7 +117,7 @@ public class MainApplicationFrame extends JFrame
 
         setContentPane(desktopPane);
 
-        addWindow(createLogWindow(), 300, 800);
+        addWindow(createLogWindow());
         addWindow(new GameWindow(bundle.getString("gameWindow.title")),
             400, 400);
         setJMenuBar(new MainMenuBar());
@@ -134,12 +134,13 @@ public class MainApplicationFrame extends JFrame
         LogWindow logWindow = new LogWindow(bundle
             .getString("logWindow.title"), Logger.getDefaultLogSource());
         logWindow.setLocation(10,10);
+        logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
         Logger.debug(bundle.getString("Logger.debug.strMessage.status"));
         return logWindow;
     }
-    
+
     private void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
         frame.setVisible(true);
