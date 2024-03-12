@@ -1,4 +1,14 @@
-/.metadata
-/robots/.settings
-/robots/bin
-eclipse.bat
+# macOS-specific files
+.DS_Store
+
+# eclipse-specific files
+/.settings/
+.project
+.classpath
+
+/target/
+
+# intellij files
+/.idea/
+
+./build.sh

@@ -1,13 +1,14 @@
-package gui;
-
+import gui.Components;
+import gui.MainApplicationFrame;
 import java.awt.Frame;
-
+import java.util.Locale;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 public class RobotsProgram
 {
     public static void main(String[] args) {
+        Components.translateComponents(Locale.getDefault());
       try {
         UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 //        UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
