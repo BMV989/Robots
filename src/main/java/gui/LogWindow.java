@@ -14,9 +14,10 @@ public class LogWindow extends JInternalFrame implements LogChangeListener
     private final LogWindowSource m_logSource;
     private final TextArea m_logContent;
 
-    public LogWindow(String title, LogWindowSource logSource)
+    public LogWindow(LogWindowSource logSource)
     {
-        super(title, true, true, true, true);
+        super(MainApplicationFrame.bundle
+            .getString("logWindow.title"), true, true, true, true);
         m_logSource = logSource;
         m_logSource.registerListener(this);
         m_logContent = new TextArea("");

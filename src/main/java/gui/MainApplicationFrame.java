@@ -1,5 +1,6 @@
 package gui;
 
+import config.PreferenceHandler;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
@@ -7,7 +8,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.JDesktopPane;
@@ -31,7 +31,7 @@ import log.Logger;
  */
 public class MainApplicationFrame extends JFrame
 {
-    private final ResourceBundle bundle = ResourceBundle.getBundle("resources",
+    public static final ResourceBundle bundle = ResourceBundle.getBundle("resources",
         Locale.getDefault());
     private final JDesktopPane desktopPane = new JDesktopPane();
     private class MainMenuBar extends JMenuBar {
@@ -118,8 +118,10 @@ public class MainApplicationFrame extends JFrame
         setContentPane(desktopPane);
 
         addWindow(createLogWindow());
-        addWindow(new GameWindow(bundle.getString("gameWindow.title")),
+        addWindow(new GameWindow(),
             400, 400);
+        for (var frame : desktopPane.getAllFrames())
+            PreferenceHandler.restoreWindow(frame);
         setJMenuBar(new MainMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -131,8 +133,7 @@ public class MainApplicationFrame extends JFrame
     }
 
     private LogWindow createLogWindow() {
-        LogWindow logWindow = new LogWindow(bundle
-            .getString("logWindow.title"), Logger.getDefaultLogSource());
+        LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
         logWindow.setLocation(10,10);
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
@@ -156,8 +157,12 @@ public class MainApplicationFrame extends JFrame
             bundle.getString("confirm.title"),
             JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            Arrays.asList(this.desktopPane.getAllFrames()).forEach(JInternalFrame::dispose);
-            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            setVisible(false);
+            for (var frame : desktopPane.getAllFrames()) {
+                PreferenceHandler.saveWindow(frame);
+                frame.dispose();
+            }
+            dispose();
         }
     }
 

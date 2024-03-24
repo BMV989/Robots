@@ -88,6 +88,9 @@ public class GameVisualizer extends JPanel
         
         return asNormalizedRadians(Math.atan2(diffY, diffX));
     }
+    public void stopTimer() {
+        m_timer.cancel();
+    }
     
     protected void onModelUpdateEvent()
     {
