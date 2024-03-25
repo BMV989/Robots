@@ -1,5 +1,6 @@
 package config;
 
+import java.beans.PropertyVetoException;
 import java.util.prefs.Preferences;
 import javax.swing.JInternalFrame;
 public class PreferenceHandler {
@@ -8,6 +9,7 @@ public class PreferenceHandler {
     private static final String prefixWindowPositionY = formatTitle("position y");
     private static final String prefixWindowSizeWidth = formatTitle("size width");
     private static final String prefixWindowSizeHeight = formatTitle("size height");
+    private static final String prefixWindowIsMinimised = formatTitle("is minimised");
 
 
     private static Preferences getPreferences() {
@@ -28,6 +30,7 @@ public class PreferenceHandler {
         preferences.putInt(prefixWindowPositionY + title, frame.getY());
         preferences.putInt(prefixWindowSizeWidth + title, frame.getWidth());
         preferences.putInt(prefixWindowSizeHeight + title, frame.getHeight());
+        preferences.putBoolean(prefixWindowIsMinimised + title, frame.isIcon());
     }
 
     public  static void restoreWindow(JInternalFrame frame) {
@@ -40,10 +43,16 @@ public class PreferenceHandler {
         int y = preferences.getInt(prefixWindowPositionY + title, missing);
         int width = preferences.getInt(prefixWindowSizeWidth + title, missing);
         int height = preferences.getInt(prefixWindowSizeHeight + title, missing);
+        boolean isMinimised = preferences.getBoolean(prefixWindowIsMinimised + title, false);
 
         if (x == -1 || y == -1 || width == -1 || height == -1)
             return;
 
         frame.setBounds(x, y, width, height);
+        try {
+            frame.setIcon(isMinimised);
+        } catch (PropertyVetoException e) {
+            e.printStackTrace(System.out);
+        }
     }
 }
