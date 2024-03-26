@@ -1,15 +1,21 @@
-package config;
+package gui;
 
 import java.beans.PropertyVetoException;
 import java.util.prefs.Preferences;
 import javax.swing.JInternalFrame;
-public class PreferenceHandler {
+
+public abstract class AbstractWindow extends JInternalFrame {
     private static final String prefixWindowPreferences = formatTitle("window preferences");
     private static final String prefixWindowPositionX = formatTitle("position x");
     private static final String prefixWindowPositionY = formatTitle("position y");
     private static final String prefixWindowSizeWidth = formatTitle("size width");
     private static final String prefixWindowSizeHeight = formatTitle("size height");
     private static final String prefixWindowIsMinimised = formatTitle("is minimised");
+    private final JInternalFrame frame = this;
+
+    public AbstractWindow(String string, boolean b, boolean b1, boolean b2, boolean b3) {
+        super(string, b, b1, b2, b3);
+    }
 
 
     private static Preferences getPreferences() {
@@ -21,7 +27,7 @@ public class PreferenceHandler {
         return cased.replaceAll(" +", "_");
     }
 
-    public static void saveWindow(JInternalFrame frame) {
+    public void saveWindow() {
         Preferences preferences = getPreferences();
 
         String title = formatTitle(frame.getTitle());
@@ -33,7 +39,7 @@ public class PreferenceHandler {
         preferences.putBoolean(prefixWindowIsMinimised + title, frame.isIcon());
     }
 
-    public  static void restoreWindow(JInternalFrame frame) {
+    public  void restoreWindow() {
         Preferences preferences = getPreferences();
         final int missing = -1;
 

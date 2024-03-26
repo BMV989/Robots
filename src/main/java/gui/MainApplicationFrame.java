@@ -1,6 +1,5 @@
 package gui;
 
-import config.PreferenceHandler;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
@@ -121,7 +120,8 @@ public class MainApplicationFrame extends JFrame
         addWindow(new GameWindow(),
             400, 400);
         for (var frame : desktopPane.getAllFrames())
-            PreferenceHandler.restoreWindow(frame);
+            if (frame instanceof AbstractWindow)
+                ((AbstractWindow) frame).restoreWindow();
         setJMenuBar(new MainMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -159,7 +159,8 @@ public class MainApplicationFrame extends JFrame
         if (confirm == JOptionPane.YES_OPTION) {
             setVisible(false);
             for (var frame : desktopPane.getAllFrames()) {
-                PreferenceHandler.saveWindow(frame);
+                if (frame instanceof AbstractWindow)
+                    ((AbstractWindow) frame).saveWindow();
                 frame.dispose();
             }
             dispose();
