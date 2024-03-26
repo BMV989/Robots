@@ -120,8 +120,8 @@ public class MainApplicationFrame extends JFrame
         addWindow(new GameWindow(),
             400, 400);
         for (var frame : desktopPane.getAllFrames())
-            if (frame instanceof AbstractWindow)
-                ((AbstractWindow) frame).restoreWindow();
+            if (frame instanceof IFrameState)
+                ((IFrameState) frame).restoreWindow();
         setJMenuBar(new MainMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
@@ -159,8 +159,8 @@ public class MainApplicationFrame extends JFrame
         if (confirm == JOptionPane.YES_OPTION) {
             setVisible(false);
             for (var frame : desktopPane.getAllFrames()) {
-                if (frame instanceof AbstractWindow)
-                    ((AbstractWindow) frame).saveWindow();
+                if (frame instanceof IFrameState)
+                    ((IFrameState) frame).saveWindow();
                 frame.dispose();
             }
             dispose();
