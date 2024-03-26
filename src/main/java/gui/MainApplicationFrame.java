@@ -39,6 +39,7 @@ public class MainApplicationFrame extends JFrame
             add(createExitMenu());
             add(createLookAndFeelMenu());
             add(createTestMenu());
+            add(createSaveMenu());
         }
         private JMenuItem createJMenuItem(String s, Integer m, ActionListener l) {
             JMenuItem item = new JMenuItem(s, m);
@@ -67,6 +68,20 @@ public class MainApplicationFrame extends JFrame
                 MainApplicationFrame.this
                         .setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName())));
             return lookAndFeelMenu;
+        }
+        private JMenu createSaveMenu() {
+            JMenu saveMenu = createJMenu(
+                bundle.getString("saveMenu.s"),
+                KeyEvent.VK_M,
+                bundle
+                    .getString("saveMenu.getAccessibleContext.setAccessibleDescription")
+            );
+            saveMenu.add(createJMenuItem(
+                bundle.getString("saveMenu.s"),
+                KeyEvent.VK_0,
+                e -> MainApplicationFrame.this.saveWindows()
+            ));
+            return saveMenu;
         }
 
         private JMenu createTestMenu() {
@@ -102,6 +117,12 @@ public class MainApplicationFrame extends JFrame
                 InputEvent.SHIFT_DOWN_MASK));
             exitMenu.add(exitMenuItem);
             return exitMenu;
+        }
+    }
+    private void saveWindows() {
+        for (var frame : desktopPane.getAllFrames()) {
+            if (frame instanceof IFrameState)
+                ((IFrameState) frame).saveWindow();
         }
     }
 
@@ -141,7 +162,6 @@ public class MainApplicationFrame extends JFrame
         Logger.debug(bundle.getString("Logger.debug.strMessage.status"));
         return logWindow;
     }
-
     private void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
         frame.setVisible(true);
