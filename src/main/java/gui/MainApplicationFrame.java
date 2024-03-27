@@ -7,6 +7,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import javax.swing.JDesktopPane;
@@ -148,7 +149,7 @@ public class MainApplicationFrame extends JFrame
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                ExitConfirm();
+                exitConfirm();
             }
         });
     }
@@ -171,20 +172,24 @@ public class MainApplicationFrame extends JFrame
         addWindow(frame);
     }
 
-    private void ExitConfirm() {
+    private void exitConfirm() {
         int confirm = JOptionPane.showConfirmDialog(this,
             bundle.getString("confirm.message"),
             bundle.getString("confirm.title"),
             JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
+            saveOnExit();
             setVisible(false);
-            for (var frame : desktopPane.getAllFrames()) {
-                if (frame instanceof IFrameState)
-                    ((IFrameState) frame).saveWindow();
-                frame.dispose();
-            }
+            Arrays.asList(desktopPane.getAllFrames()).forEach(JInternalFrame::dispose);
             dispose();
         }
+    }
+    private void saveOnExit() {
+        int confirm = JOptionPane.showConfirmDialog(this,
+            bundle.getString("save.message"),
+            bundle.getString("saveMenu.s"),
+            JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) saveWindows();
     }
 
     private void setLookAndFeel(String className)
