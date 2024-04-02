@@ -31,7 +31,7 @@ import log.Logger;
  */
 public class MainApplicationFrame extends JFrame
 {
-    private final ResourceBundle bundle = ResourceBundle.getBundle("resources",
+    public static final ResourceBundle bundle = ResourceBundle.getBundle("resources",
         Locale.getDefault());
     private final JDesktopPane desktopPane = new JDesktopPane();
     private class MainMenuBar extends JMenuBar {
@@ -40,6 +40,7 @@ public class MainApplicationFrame extends JFrame
             add(createExitMenu());
             add(createLookAndFeelMenu());
             add(createTestMenu());
+            add(createSaveMenu());
         }
         private JMenuItem createJMenuItem(String s, Integer m, ActionListener l) {
             JMenuItem item = new JMenuItem(s, m);
@@ -68,6 +69,20 @@ public class MainApplicationFrame extends JFrame
                 MainApplicationFrame.this
                         .setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName())));
             return lookAndFeelMenu;
+        }
+        private JMenu createSaveMenu() {
+            JMenu saveMenu = createJMenu(
+                bundle.getString("saveMenu.s"),
+                KeyEvent.VK_M,
+                bundle
+                    .getString("saveMenu.getAccessibleContext.setAccessibleDescription")
+            );
+            saveMenu.add(createJMenuItem(
+                bundle.getString("saveMenu.s"),
+                KeyEvent.VK_0,
+                e -> MainApplicationFrame.this.saveWindows()
+            ));
+            return saveMenu;
         }
 
         private JMenu createTestMenu() {
@@ -105,6 +120,12 @@ public class MainApplicationFrame extends JFrame
             return exitMenu;
         }
     }
+    private void saveWindows() {
+        for (var frame : desktopPane.getAllFrames()) {
+            if (frame instanceof IFrameState)
+                ((IFrameState) frame).saveWindow();
+        }
+    }
 
     public MainApplicationFrame() {
         int inset = 50;
@@ -118,21 +139,23 @@ public class MainApplicationFrame extends JFrame
         setContentPane(desktopPane);
 
         addWindow(createLogWindow());
-        addWindow(new GameWindow(bundle.getString("gameWindow.title")),
+        addWindow(new GameWindow(),
             400, 400);
+        for (var frame : desktopPane.getAllFrames())
+            if (frame instanceof IFrameState)
+                ((IFrameState) frame).restoreWindow();
         setJMenuBar(new MainMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                ExitConfirm();
+                exitConfirm();
             }
         });
     }
 
     private LogWindow createLogWindow() {
-        LogWindow logWindow = new LogWindow(bundle
-            .getString("logWindow.title"), Logger.getDefaultLogSource());
+        LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
         logWindow.setLocation(10,10);
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
@@ -140,7 +163,6 @@ public class MainApplicationFrame extends JFrame
         Logger.debug(bundle.getString("Logger.debug.strMessage.status"));
         return logWindow;
     }
-
     private void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
         frame.setVisible(true);
@@ -150,15 +172,24 @@ public class MainApplicationFrame extends JFrame
         addWindow(frame);
     }
 
-    private void ExitConfirm() {
+    private void exitConfirm() {
         int confirm = JOptionPane.showConfirmDialog(this,
             bundle.getString("confirm.message"),
             bundle.getString("confirm.title"),
             JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
-            Arrays.asList(this.desktopPane.getAllFrames()).forEach(JInternalFrame::dispose);
-            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            saveOnExit();
+            setVisible(false);
+            Arrays.asList(desktopPane.getAllFrames()).forEach(JInternalFrame::dispose);
+            dispose();
         }
+    }
+    private void saveOnExit() {
+        int confirm = JOptionPane.showConfirmDialog(this,
+            bundle.getString("save.message"),
+            bundle.getString("saveMenu.s"),
+            JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) saveWindows();
     }
 
     private void setLookAndFeel(String className)
