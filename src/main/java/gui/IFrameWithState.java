@@ -1,6 +1,6 @@
 package gui;
 
-public interface IFrameState {
+public interface IFrameWithState {
     void saveWindow();
     void restoreWindow();
 }

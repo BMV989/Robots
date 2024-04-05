@@ -122,12 +122,15 @@ public class MainApplicationFrame extends JFrame
     }
     private void saveWindows() {
         for (var frame : desktopPane.getAllFrames()) {
-            if (frame instanceof IFrameState)
-                ((IFrameState) frame).saveWindow();
+            if (frame instanceof IFrameWithState)
+                ((IFrameWithState) frame).saveWindow();
         }
     }
 
     public MainApplicationFrame() {
+       initUI();
+    }
+    private void initUI() {
         int inset = 50;
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
@@ -142,8 +145,8 @@ public class MainApplicationFrame extends JFrame
         addWindow(new GameWindow(),
             400, 400);
         for (var frame : desktopPane.getAllFrames())
-            if (frame instanceof IFrameState)
-                ((IFrameState) frame).restoreWindow();
+            if (frame instanceof IFrameWithState)
+                ((IFrameWithState) frame).restoreWindow();
         setJMenuBar(new MainMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
