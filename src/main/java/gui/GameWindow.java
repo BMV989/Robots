@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
+import model.Robot;
 
 public class GameWindow extends AbstractWindow
 {
@@ -9,7 +10,7 @@ public class GameWindow extends AbstractWindow
     public GameWindow() {
         super(MainApplicationFrame.bundle.getString("gameWindow.title"),
             true, true, true, true);
-        m_visualizer = new GameVisualizer();
+        m_visualizer = new GameVisualizer(new Robot(10, 10));
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
