@@ -98,4 +98,11 @@ public class Robot extends Observable {
     public double getM_robotDirection() {
         return m_robotDirection;
     }
+
+    public String log() {
+        return String.format(
+            "Position: (%f, %f) | Direction: %f",
+            m_robotPositionX, m_robotPositionY, m_robotDirection
+        );
+    }
 }
