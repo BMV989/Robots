@@ -16,6 +16,9 @@ public abstract class AbstractWindow extends JInternalFrame implements IFrameWit
     public AbstractWindow(String string, boolean b, boolean b1, boolean b2, boolean b3) {
         super(string, b, b1, b2, b3);
     }
+    public  AbstractWindow() {
+        super();
+    }
 
 
     private static Preferences getPreferences() {

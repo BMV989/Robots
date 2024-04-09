@@ -7,10 +7,10 @@ import model.Robot;
 public class GameWindow extends AbstractWindow
 {
     private final GameVisualizer m_visualizer;
-    public GameWindow() {
+    public GameWindow(Robot robot) {
         super(MainApplicationFrame.bundle.getString("gameWindow.title"),
             true, true, true, true);
-        m_visualizer = new GameVisualizer(new Robot(10, 10));
+        m_visualizer = new GameVisualizer(robot);
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
         getContentPane().add(panel);
