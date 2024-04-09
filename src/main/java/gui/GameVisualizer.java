@@ -69,8 +69,9 @@ public class GameVisualizer extends JPanel implements Observer
 
     protected void setTargetPosition(Point p)
     {
-        m_targetPositionX = p.x;
-        m_targetPositionY = p.y;
+        double rate = 2f;
+        m_targetPositionX = (int) (p.x * rate);
+        m_targetPositionY = (int) (p.y * rate);
     }
     
     protected void onRedrawEvent()
