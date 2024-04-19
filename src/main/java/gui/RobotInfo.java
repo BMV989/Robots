@@ -4,18 +4,16 @@ import java.awt.BorderLayout;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JLabel;
-import model.Robot;
+import model.RobotsLogic;
 
 public class RobotInfo extends AbstractWindow implements Observer {
-    private final Robot robot;
     private  final JLabel label;
 
-    public RobotInfo(Robot robot) {
+    public RobotInfo(RobotsLogic logic) {
         super();
-        this.robot = robot;
         this.label = new JLabel();
 
-        robot.addObserver(this);
+        logic.addObserver(this);
         setResizable(true);
         setClosable(true);
         setMaximizable(true);
@@ -27,6 +25,8 @@ public class RobotInfo extends AbstractWindow implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        label.setText(robot.log());
+        RobotsLogic lg = (RobotsLogic) o;
+        label.setText("x=%f y=%f dir=%f".formatted(lg.getRobot().getPosition().getX(),
+            lg.getRobot().getPosition().getY(), lg.getRobot().getDirection()));
     }
 }

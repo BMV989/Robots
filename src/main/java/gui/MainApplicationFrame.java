@@ -22,7 +22,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import log.Logger;
-import model.Robot;
+import model.RobotsLogic;
 
 /**
  * Что требуется сделать:
@@ -141,10 +141,10 @@ public class MainApplicationFrame extends JFrame
             screenSize.height - inset*2);
 
         setContentPane(desktopPane);
-        var robot = new Robot(10, 10);
-        addWindow(new RobotInfo(robot), 300, 300);
+        var logic = new RobotsLogic();
+        addWindow(new RobotInfo(logic), 300, 300);
         addWindow(createLogWindow());
-        addWindow(new GameWindow(robot),
+        addWindow(new GameWindow(logic),
             400, 400);
         for (var frame : desktopPane.getAllFrames())
             if (frame instanceof IFrameWithState)
