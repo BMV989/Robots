@@ -22,6 +22,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import log.Logger;
+import model.RobotsLogic;
 
 /**
  * Что требуется сделать:
@@ -122,12 +123,15 @@ public class MainApplicationFrame extends JFrame
     }
     private void saveWindows() {
         for (var frame : desktopPane.getAllFrames()) {
-            if (frame instanceof IFrameState)
-                ((IFrameState) frame).saveWindow();
+            if (frame instanceof IFrameWithState)
+                ((IFrameWithState) frame).saveWindow();
         }
     }
 
     public MainApplicationFrame() {
+       initUI();
+    }
+    private void initUI() {
         int inset = 50;
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
@@ -137,13 +141,14 @@ public class MainApplicationFrame extends JFrame
             screenSize.height - inset*2);
 
         setContentPane(desktopPane);
-
+        var logic = new RobotsLogic();
+        addWindow(new RobotInfo(logic), 300, 300);
         addWindow(createLogWindow());
-        addWindow(new GameWindow(),
+        addWindow(new GameWindow(logic),
             400, 400);
         for (var frame : desktopPane.getAllFrames())
-            if (frame instanceof IFrameState)
-                ((IFrameState) frame).restoreWindow();
+            if (frame instanceof IFrameWithState)
+                ((IFrameWithState) frame).restoreWindow();
         setJMenuBar(new MainMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {

@@ -4,7 +4,7 @@ import java.beans.PropertyVetoException;
 import java.util.prefs.Preferences;
 import javax.swing.JInternalFrame;
 
-public abstract class AbstractWindow extends JInternalFrame implements IFrameState {
+public abstract class AbstractWindow extends JInternalFrame implements IFrameWithState {
     private static final String prefixWindowPreferences = formatTitle("window preferences");
     private static final String prefixWindowPositionX = formatTitle("position x");
     private static final String prefixWindowPositionY = formatTitle("position y");
@@ -15,6 +15,9 @@ public abstract class AbstractWindow extends JInternalFrame implements IFrameSta
 
     public AbstractWindow(String string, boolean b, boolean b1, boolean b2, boolean b3) {
         super(string, b, b1, b2, b3);
+    }
+    public  AbstractWindow() {
+        super();
     }
 
 
